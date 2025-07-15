@@ -704,7 +704,7 @@ class ServiceDetailUpdateView(UpdateView):
         messages.error(self.request, 'Error, Please try again')
         return super().form_invalid(form)
 
-
+    
 class ServiceDetailDeleteView(DeleteView):
     model = models.ServiceDetail
     template_name = "adminapp/servicedetail_list.html"

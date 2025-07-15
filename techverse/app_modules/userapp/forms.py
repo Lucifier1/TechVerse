@@ -6,3 +6,5 @@ class ContactEnquiryForm(forms.ModelForm):
     class Meta:
         model = models.ContactEnquiry
         fields = "__all__"
+        
+        

@@ -16,7 +16,7 @@ class ContactEnquiry(BaseModel):
     def __str__(self):
         return self.email or "Unknown"
     
-class CareerEnquiry(BaseModel):
+class CareerEnquiry(BaseModel): 
     first_name = models.CharField(max_length=255,null=True,blank=True)
     last_name = models.CharField(max_length=255,null=True,blank=True)
     experience = models.IntegerField(null=True,blank=True)

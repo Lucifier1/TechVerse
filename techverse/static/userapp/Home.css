@@ -1572,6 +1572,17 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .location-section {
+  background-image: url("https://www.shutterstock.com/image-vector/destinations-isometric-gps-tracking-map-600nw-2397316607.jpg");
+  /* min-height: 70vh; */
+  background-size: cover;
+  background-position: center;
+  /* background-attachment: fixed; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 3rem 1rem;
+  text-align: center;
   /* background-color: #00233B; */
   color: #fff;
   /* padding: 2rem 0; */

@@ -5,7 +5,7 @@ from app_modules.adminapp import models
 from app_modules.adminapp import forms 
 from app_modules.userapp.forms import ContactEnquiryForm
 from django.urls import reverse_lazy
-
+from django.core.paginator import Paginator
 # Create your views here.
 
 
@@ -92,17 +92,25 @@ class UserAIDetailView(DetailView):
 
 class UserBlogView(TemplateView):
     template_name = "userapp/blog.html"
+    paginate_by = 9
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         category_id = self.request.GET.get('category')
+        page_number = self.request.GET.get('page', 1)
+        
         blogs = models.Blog.objects.all().order_by('-id')
         if category_id:
             category_data = models.BlogCategory.objects.get(id=category_id)
             blogs = blogs.filter(category=category_data)
         
+        paginator = Paginator(blogs, self.paginate_by)
+        page_obj = paginator.get_page(page_number)
         context["blog_category"] = models.BlogCategory.objects.all() 
-        context["blogs"] = blogs
+        context["paginator"] = paginator
+        context["blogs"] = page_obj
+        context["page_obj"] = page_obj
+        context["page_number"] = page_number
         context["category_id"] = category_id
         return context
     
@@ -125,17 +133,16 @@ class UserBlogDetailView(DetailView):
     
 class UserContactView(TemplateView):
     template_name = "userapp/contact.html"
-    
-    def post(self,request,*args):
+
+    def post(self, request, *args, **kwargs):
         form = ContactEnquiryForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(self.request,'Form submitted Successfully')
+            messages.success(request, '✅Your message has been submitted successfully!')
         else:
-            messages.success(self.request,'Error, Please try again')
+            messages.error(request, '❌ Please fill in all required fields correctly.')
             print(form.errors)
-        referer = self.request.META.get('HTTP_REFERER')
-        return redirect(referer)
+        return redirect(request.META.get('HTTP_REFERER'))
 
 
 class UserPrivacyPolicyView(TemplateView):
