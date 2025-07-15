@@ -571,40 +571,42 @@
           </div>
         </div>
         <div class="col-lg-6 col-sm-12 contact-right">
-          <form method="post" action="{% url 'userapp:contact' %}">
-            {% csrf_token %} 
-            <div class="row mb-4">
-              <div class="col-md-6">
-                <label class="form-label">First Name</label>
-                <input type="text" name="first_name" class="form-control" placeholder="" required>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Last Name</label>
-                <input type="text" name="last_name" class="form-control" placeholder="">
-              </div>
+          <form method="post" id="contactForm" action="{% url 'userapp:contact' %}">
+          {% csrf_token %}
+          <div class="row mb-2">
+            <div class="col-md-6">
+              <label class="form-label mb-0">First Name</label>
+              <input type="text" name="first_name" class="form-control pt-0" required pattern="[A-Za-z]+" title="Only alphabetic characters allowed.">
             </div>
-            <div class="row mb-4">
-              <div class="col-md-6">
-                <label class="form-label">Company</label>
-                <input type="text" name="company" class="form-control" placeholder="">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Email Address</label>
-                <input type="email" name="email" class="form-control" placeholder="" required>
-              </div>
+            <div class="col-md-6">
+              <label class="form-label mb-0">Last Name</label>
+              <input type="text" name="last_name" class="form-control pt-0" required pattern="[A-Za-z]+" title="Only alphabetic characters allowed.">
             </div>
-            
-            <div class="mb-4">
-              <label class="form-label">Subject</label>
-              <input type="text" name="subject" class="form-control" placeholder="">
-
+          </div>
+          <div class="row mb-2">
+            <div class="col-md-6">
+              <label class="form-label mb-0">Company</label>
+              <input type="text" name="company" class="form-control pt-0" required>
             </div>
-            <div class="mb-4">
-              <label class="form-label">Message</label>
-              <textarea class="form-control" name="message" rows="4" ></textarea>
+            <div class="col-md-6">
+              <label class="form-label mb-0">Phone</label>
+              <input type="text" name="phone" class="form-control pt-0" required maxlength="10" pattern="\d{10}" title="Enter exactly 10 digits.">
             </div>
-            <button type="submit" class="btn neon-button text-white py-3">Submit Now</button>
-          </form>
+          </div>
+          <div class="mb-2">
+            <label class="form-label mb-0">Email Address</label>
+            <input type="email" name="email" class="form-control pt-0" required>
+          </div>
+          <div class="mb-2">
+            <label class="form-label mb-0">Subject</label>
+            <input type="text" name="subject" class="form-control pt-0" required>
+          </div>
+          <div class="mb-2">
+            <label class="form-label mb-0">Message</label>
+            <textarea class="form-control" name="message" rows="3" required placeholder="Start typing here..."></textarea>
+          </div>
+          <button type="submit" class="btn neon-button text-white px-4">Send</button>
+        </form>
         </div>
       </div>
     </div>
