@@ -3,14 +3,7 @@
 
 {% block content %}
 
-<!-- Popup Messages -->
-{% if messages %}
-  <div id="popup-messages" style="display: none;">
-    {% for message in messages %}
-      <p data-tags="{{ message.tags }}">{{ message }}</p>
-    {% endfor %}
-  </div>
-{% endif %}
+
 
 <!-- Section 1 Hero Section Start -->
 <div class="container-fluid position-relative p-0">
@@ -76,25 +69,6 @@
   </div>
 </div>
 <!-- Section 2 End -->
-
-<!-- iziToast Message Handling -->
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    var messagesDiv = document.getElementById("popup-messages");
-    if (messagesDiv) {
-      var messageElements = messagesDiv.querySelectorAll("p");
-      messageElements.forEach(function (el) {
-        var text = el.textContent.trim();
-        var tag = el.dataset.tags || "";
-        if (tag.includes("error")) {
-          iziToast.error({ title: "Error", message: text, position: "topRight", timeout: 5000 });
-        } else if (tag.includes("success")) {
-          iziToast.success({ title: "Success", message: text, position: "topRight", timeout: 4000 });
-        }
-      });
-    }
-  });
-</script>
 
 <!-- ✅ JavaScript Phone Validation -->
 <script>

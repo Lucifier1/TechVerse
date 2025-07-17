@@ -138,9 +138,9 @@ class UserContactView(TemplateView):
         form = ContactEnquiryForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, '✅Your message has been submitted successfully!')
+            messages.success(request, 'Your message has been submitted successfully!')
         else:
-            messages.error(request, '❌ Please fill in all required fields correctly.')
+            messages.error(request, 'Please fill in all required fields correctly.')
             print(form.errors)
         return redirect(request.META.get('HTTP_REFERER'))
 
