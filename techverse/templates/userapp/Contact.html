@@ -3,9 +3,6 @@
 
 {% block content %}
 
-
-
-<!-- Section 1 Hero Section Start -->
 <div class="container-fluid position-relative p-0">
   <div class="header-section">
     <div class="header-content">
@@ -14,9 +11,7 @@
     </div>
   </div>
 </div>
-<!-- Section 1 Hero Section End -->
 
-<!-- Section 2 Start -->
 <div class="container-md py-5">
   <div class="d-flex flex-column align-items-center">
     <h2 class="text-blue fw-bold">Get in Touch</h2>
@@ -28,7 +23,7 @@
     </div>
     <div class="col-lg-6 col-sm-12">
       <div class="contact-form">
-        <form method="post" id="contactForm" >
+        <form method="post" id="contactForm">
           {% csrf_token %}
           <div class="row mb-2">
             <div class="col-md-6">
@@ -40,6 +35,7 @@
               <input type="text" name="last_name" class="form-control pt-0" required pattern="[A-Za-z]+" title="Only alphabetic characters allowed.">
             </div>
           </div>
+
           <div class="row mb-2">
             <div class="col-md-6">
               <label class="form-label mb-0">Company</label>
@@ -47,9 +43,12 @@
             </div>
             <div class="col-md-6">
               <label class="form-label mb-0">Phone</label>
-              <input type="text" name="phone" class="form-control pt-0" required maxlength="10" pattern="\d{10}" title="Enter exactly 10 digits.">
+              <input id="phone" type="tel" name="phone" class="form-control pt-0" required>
+              <input type="hidden" name="full_phone" id="full_phone">
+              <input type="hidden" name="country_name" id="country_name">
             </div>
           </div>
+
           <div class="mb-2">
             <label class="form-label mb-0">Email Address</label>
             <input type="email" name="email" class="form-control pt-0" required>
@@ -68,23 +67,38 @@
     </div>
   </div>
 </div>
-<!-- Section 2 End -->
 
-<!-- ✅ JavaScript Phone Validation -->
+<!-- ✅ intl-tel-input CSS & JS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
+
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('contactForm');
-    const phoneInput = form.querySelector('input[name="phone"]');
+  document.addEventListener("DOMContentLoaded", function () {
+    const phoneInput = document.querySelector("#phone");
 
-    form.addEventListener('submit', function (e) {
-      const phoneValue = phoneInput.value.trim();
-      const phoneRegex = /^\d{10}$/;
+    const iti = window.intlTelInput(phoneInput, {
+      initialCountry: "us",  // ✅ Default USA
+      separateDialCode: true,
+      preferredCountries: ["us", "in", "gb", "ae"], // top countries on top
+      utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+    });
 
-      if (!phoneRegex.test(phoneValue)) {
+    const form = document.querySelector("#contactForm");
+
+    form.addEventListener("submit", function (e) {
+      if (!iti.isValidNumber()) {
         e.preventDefault();
-        alert('Please enter a valid 10-digit phone number.');
+        alert("❌ Please enter a valid phone number for the selected country.");
         phoneInput.focus();
+        return false;
       }
+
+      // ✅ Store full phone with country code
+      document.querySelector("#full_phone").value = iti.getNumber();
+
+      // ✅ Store selected country name
+      const countryData = iti.getSelectedCountryData();
+      document.querySelector("#country_name").value = countryData.name;
     });
   });
 </script>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+  <meta charset="UTF-8">
+  <title>Register - Techverse</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{% static 'adminapp/assets/css/app.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminapp/assets/css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'adminapp/assets/css/components.css' %}">
+  <link rel="stylesheet" href="{% static 'adminapp/assets/css/custom.css' %}">
+
+  <style>
+    body {
+      background-color: #f7f9fc;
+      overflow: hidden;
+    }
+    .card {
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    }
+    .form-control:invalid {
+      border-color: red;
+    }
+    .form-control:valid {
+      border-color: green;
+    }
+    .text-danger {
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container h-100 d-flex align-items-center justify-content-center">
+    <div class="row w-100">
+      <div class="col-md-10 offset-md-1">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h4 class="text-center w-100">Create Your Account</h4>
+          </div>
+          <div class="card-body">
+            <form method="POST" novalidate>
+              {% csrf_token %}
+
+              {% if form.non_field_errors %}
+              <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+              {% endif %}
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="id_username">Username</label>
+                    <input type="text" name="username" id="id_username" class="form-control" required>
+                    {% if form.username.errors %}
+                    <small class="text-danger">{{ form.username.errors.0 }}</small>
+                    {% endif %}
+                  </div>
+
+                  <div class="form-group">
+                    <label for="id_email">Email</label>
+                    <input type="email" name="email" id="id_email" class="form-control" required>
+                    {% if form.email.errors %}
+                    <small class="text-danger">{{ form.email.errors.0 }}</small>
+                    {% endif %}
+                  </div>
+
+                  <div class="form-group">
+                    <label for="id_password1">Password</label>
+                    <input type="password" name="password1" id="id_password1" class="form-control" required minlength="8">
+                    {% if form.password1.errors %}
+                    <small class="text-danger">{{ form.password1.errors.0 }}</small>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="id_first_name">First Name</label>
+                    <input type="text" name="first_name" id="id_first_name" class="form-control" required pattern="[A-Za-z\s]+"
+                      title="Only letters and spaces allowed">
+                    {% if form.first_name.errors %}
+                    <small class="text-danger">{{ form.first_name.errors.0 }}</small>
+                    {% endif %}
+                  </div>
+
+                  <div class="form-group">
+                    <label for="id_last_name">Last Name</label>
+                    <input type="text" name="last_name" id="id_last_name" class="form-control" required pattern="[A-Za-z\s]+"
+                      title="Only letters and spaces allowed">
+                    {% if form.last_name.errors %}
+                    <small class="text-danger">{{ form.last_name.errors.0 }}</small>
+                    {% endif %}
+                  </div>
+
+                  <div class="form-group">
+                    <label for="id_password2">Confirm Password</label>
+                    <input type="password" name="password2" id="id_password2" class="form-control" required minlength="8">
+                    {% if form.password2.errors %}
+                    <small class="text-danger">{{ form.password2.errors.0 }}</small>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group text-center">
+                <button type="submit" class="btn btn-primary px-5">Register</button>
+              </div>
+            </form>
+
+            <div class="text-center mt-3">
+              {% comment %} Already have an account? <a href="{% url 'userapp:login' %}">Login here</a>  {% endcomment %}
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="{% static 'adminapp/assets/js/app.min.js' %}"></script>
+  <script src="{% static 'adminapp/assets/js/scripts.js' %}"></script>
+</body>
+</html>

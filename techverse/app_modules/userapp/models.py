@@ -10,7 +10,7 @@ class ContactEnquiry(BaseModel):
     company = models.CharField(max_length=255,null=True,blank=True)
     email = models.EmailField(null=True,blank=True)
     subject = SummernoteTextField(null=True,blank=True)
-    phone = models.BigIntegerField(null=True,blank=True)
+    phone = models.CharField(max_length=20,null=True,blank=True)
     message = SummernoteTextField(null=True,blank=True)
     
     def __str__(self):

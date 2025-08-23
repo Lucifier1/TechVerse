@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+  <title>Techverse - Login</title>
+
+  <!-- General CSS Files -->
+  <link rel="stylesheet" href="{% static 'adminapp/assets/css/app.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminapp/assets/bundles/bootstrap-social/bootstrap-social.css' %}">
+  <link rel="stylesheet" href="{% static 'adminapp/assets/css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'adminapp/assets/css/components.css' %}">
+  <link rel="stylesheet" href="{% static 'adminapp/assets/css/custom.css' %}">
+  <link rel='shortcut icon' type='image/x-icon' href="{% static 'adminapp/assets/img/favicon.ico' %}" />
+</head>
+
+<body>
+  <div class="loader"></div>
+  <div id="app">
+    <section class="section">
+      <div class="container mt-5">
+        <div class="row">
+          <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
+            <div class="card card-primary">
+              <div class="card-header">
+                <h4>Login</h4>
+              </div>
+              <div class="card-body">
+
+                <!-- Django Login Form -->
+                <form method="POST" action="{% url 'adminapp:admin_login' %}" class="needs-validation" novalidate>
+                  {% csrf_token %}
+
+                  <!-- Messages Framework -->
+                  {% if messages %}
+                    {% for message in messages %}
+                      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                  {% endif %}
+
+                  <!-- Non-field Errors -->
+                  {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                      {{ form.non_field_errors }}
+                    </div>
+                  {% endif %}
+
+                  <div class="form-group">
+                    <label for="id_username">Username</label>
+                    <input id="id_username" type="text" name="username" class="form-control"
+                           value="{{ form.username.value|default_if_none:'' }}" required autofocus>
+                    {% if form.username.errors %}
+                      <div class="text-danger">{{ form.username.errors.0 }}</div>
+                    {% endif %}
+                  </div>
+
+                  <div class="form-group">
+                    <label for="id_password">Password</label>
+                    <input id="id_password" type="password" name="password" class="form-control" required>
+                    {% if form.password.errors %}
+                      <div class="text-danger">{{ form.password.errors.0 }}</div>
+                    {% endif %}
+                  </div>
+
+                  <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">
+                      Login
+                    </button>
+                  </div>
+                </form>
+
+              </div>
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- JS -->
+  <script src="{% static 'adminapp/assets/js/app.min.js' %}"></script>
+  <script src="{% static 'adminapp/assets/js/scripts.js' %}"></script>
+  <script src="{% static 'adminapp/assets/js/custom.js' %}"></script>
+</body>
+</html>

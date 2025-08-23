@@ -65,6 +65,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'app_modules.adminapp.middleware.AdminAppLoginRequiredMiddleware',
+    # 'techverse.middleware.admin_access_middleware.AdminAccessRestrictionMiddleware',
 ]
 
 ROOT_URLCONF = 'techverse.urls'
@@ -141,6 +143,13 @@ STATIC_ROOT = '/static_tech/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 
+# LOGIN_URL = 'adminapp:admin_login'
+# LOGIN_REDIRECT_URL = 'adminapp:admin_login'
+
+LOGIN_URL = '/adminapp/admin_login/'
+LOGIN_REDIRECT_URL = '/adminapp/admin_index/'
+LOGOUT_REDIRECT_URL = '/adminapp/admin_login/'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -154,3 +163,14 @@ SUPER_USER = {
     "ADMIN_USERNAME":os.environ.get("ADMIN_USERNAME"),
     "ADMIN_PASSWORD":os.environ.get("ADMIN_PASSWORD"),
 }
+
+# settings.py
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'demo.spectricssolutions@gmail.com'
+EMAIL_HOST_PASSWORD = 'mfdk dmdx qigw utuh'  # Gmail ma app password generate karo
+DEFAULT_FROM_EMAIL = 'demo.spectricssolutions@gmail.com'
+

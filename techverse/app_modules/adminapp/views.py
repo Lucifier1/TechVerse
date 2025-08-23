@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from django.views.generic import TemplateView,ListView,UpdateView,DeleteView,DetailView,View,CreateView
+from django.shortcuts import render,redirect
+from django.views.generic import TemplateView,ListView,UpdateView,DeleteView,DetailView,View,CreateView 
 from django.contrib import messages
 from app_modules.adminapp import models
 from app_modules.adminapp import forms 
@@ -10,9 +10,66 @@ from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.utils.dateparse import parse_date
+from app_modules.base.mixins import UserRequiredMixin
+
 # Create your views here.
 
+# --------------------------------------------------- AUTH --------------------------------------------------------
+
+# userapp/views.py
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.views import LoginView, LogoutView 
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
+from django.contrib.auth import login, authenticate
+
+class AdminRegisterView(TemplateView):
+    template_name = "adminapp/admin_register.html"
+
+class AdminLoginView(LoginView):
+    template_name = "adminapp/admin_login.html"
+    def form_valid(self, form):
+        username = self.request.POST.get('username')
+        password = self.request.POST.get('password')
+        user = authenticate(username=username,password=password)
+        print(user)
+        if user:
+            login(self.request,user)
+            return redirect("adminapp:admin_index")
+        else:
+            return redirect("userapp:admin_login")
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+        print(form.errors)
+        return response
+
+    
+class AdminLogoutView(LogoutView):
+    next_page = reverse_lazy('adminapp:admin_login')
+
+
 # --------------------------------------------------- USER-CRUD --------------------------------------------------------
+
+class AdminIndeView(UserRequiredMixin,TemplateView):
+    template_name = "adminapp/index.html"
+
+    def test_func(self):
+        return self.request.user.is_staff  
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Total Inquiry count
+        context['total_inquiries'] = models.CareerEnquiry.objects.count()
+
+        # Total Contact Inquiry count
+        context['total_contact_inquiries'] = models.ContactEnquiry.objects.count()
+
+        return context
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context["user"] = models.User.objects.first()
+#         return context
 
 class UserCreateView(CreateView):
     model = models.User
@@ -780,3 +837,144 @@ class IndustryDetailDeleteView(DeleteView):
         print(form.errors)
         messages.error(self.request, 'Error, Please try again')
         return super().form_invalid(form)
+
+# --------------------------------------------------- CONTACT_INQUIRY_VIEW-CRUD  --------------------------------------------------------
+from app_modules.userapp import models 
+
+
+class ContactInquiryView(UserRequiredMixin,ListView):
+    model = models.ContactEnquiry
+    template_name = "adminapp/contactinquiry_list.html"
+class ContactDatatableView(View):
+    model = models.ContactEnquiry
+    queryset = models.ContactEnquiry.objects.all().order_by('-id')
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get('search[value]', '')
+        start_date = self.request.GET.get('start_date')
+        end_date = self.request.GET.get('end_date')
+
+        if search:
+            qs = qs.filter(
+                Q(first_name__icontains=search) |
+                Q(last_name__icontains=search) |
+                Q(email__icontains=search) |
+                Q(company__icontains=search) |
+                Q(subject__icontains=search) |
+                Q(message__icontains=search)
+            )
+        if start_date and end_date:
+            start_date_parsed = parse_date(start_date)
+            end_date_parsed = parse_date(end_date)
+            if start_date_parsed and end_date_parsed:
+                qs = qs.filter(created_at__gte=start_date_parsed, created_at__lte=end_date_parsed)
+        return qs
+
+    def prepare_results(self, qs, start_index):
+        data = []
+        for index, obj in enumerate(qs):
+            data.append({
+                'id': start_index + index + 1,
+                'first_name': obj.first_name or '',
+                'last_name': obj.last_name or '',
+                'company': obj.company or '',
+                'email': obj.email or '',
+                'phone': obj.phone or '',
+                'subject': obj.subject or '',
+                'message': obj.message or '',
+            })
+        return data
+
+    def get(self, request, *args, **kwargs):
+        self.request = request  # Fix to allow access in filter_queryset
+        start = int(request.GET.get('start', 0))
+        length = int(request.GET.get('length', 10))
+
+        filtered_qs = self.filter_queryset(self.queryset)
+        paginator = Paginator(filtered_qs, length)
+        page_number = (start // length) + 1
+        page_obj = paginator.get_page(page_number)
+
+        data = self.prepare_results(page_obj, start)
+
+        response = {
+            'draw': int(request.GET.get('draw', 0)),
+            'recordsTotal': self.queryset.count(),
+            'recordsFiltered': filtered_qs.count(),
+            'data': data,
+        }
+        return JsonResponse(response)
+    
+# --------------------------------------------------- CAREEREN_QUIRY-CRUD --------------------------------------------------------
+    
+class CareerEnquiryView(UserRequiredMixin,ListView):
+    model = models.CareerEnquiry
+    template_name = "adminapp/career_enquiry_listview.html"
+    
+    
+
+class CareerDatatableView(View):
+    model = models.CareerEnquiry
+    queryset = models.CareerEnquiry.objects.all().order_by('-id')
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get('search[value]', '')
+        start_date = self.request.GET.get('start_date')
+        end_date = self.request.GET.get('end_date')
+
+        if search:
+            qs = qs.filter(
+                Q(first_name__icontains=search) |
+                Q(last_name__icontains=search) |
+                Q(position__icontains=search) |
+                Q(message__icontains=search) |
+                Q(alt__icontains=search)
+            )
+        if start_date and end_date:
+            start_date_parsed = parse_date(start_date)
+            end_date_parsed = parse_date(end_date)
+            if start_date_parsed and end_date_parsed:
+                qs = qs.filter(
+                    created_at__gte=start_date_parsed,
+                    created_at__lte=end_date_parsed
+                )
+        return qs
+
+    def prepare_results(self, qs, start_index):
+        data = []
+        for index, obj in enumerate(qs):
+            resume_link = (
+                f'<a href="{obj.resume.url}" target="_blank" download>Download</a>'
+                if obj.resume else 'N/A'
+            )
+            data.append({
+                'id': start_index + index + 1,
+                'first_name': obj.first_name or '',
+                'last_name': obj.last_name or '',
+                'experience': obj.experience or '',
+                'position': obj.position or '',
+                'resume': resume_link,
+                'message': obj.message or '',
+                'alt': obj.alt or '',
+            })
+        return data
+
+    def get(self, request, *args, **kwargs):
+        self.request = request
+        start = int(request.GET.get('start', 0))
+        length = int(request.GET.get('length', 10))
+
+        filtered_qs = self.filter_queryset(self.queryset)
+        paginator = Paginator(filtered_qs, length)
+        page_number = (start // length) + 1
+        page_obj = paginator.get_page(page_number)
+
+        data = self.prepare_results(page_obj, start)
+
+        response = {
+            'draw': int(request.GET.get('draw', 0)),
+            'recordsTotal': self.queryset.count(),
+            'recordsFiltered': filtered_qs.count(),
+            'data': data,
+        }
+        return JsonResponse(response)

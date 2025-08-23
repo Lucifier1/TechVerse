@@ -6,6 +6,20 @@ app_name = "adminapp"
 
 urlpatterns = [
     
+    path('admin_index/', views.AdminIndeView.as_view(), name="admin_index"),
+    
+# --------------------------------------  AUTH URLS  -------------------------------------------------------
+    path('admin_register/', views.AdminRegisterView.as_view(), name='admin_register'),
+    path('admin_login/', views.AdminLoginView.as_view(), name='admin_login'),
+    path('admin_logout/', views.AdminLogoutView.as_view(), name='admin_logout'),
+    
+# --------------------------------------  Contact-Inquiry URLS  -------------------------------------------------------
+    path('contact_inquiry/', views.ContactDatatableView.as_view(), name="contact_inquiry"),
+    path('contact_datatable/', views.ContactDatatableView.as_view(), name="contact_datatable"),
+    
+# --------------------------------------  Career-Enquiry URLS  -------------------------------------------------------
+    path('career_inquiry/', views.CareerEnquiryView.as_view(), name="career_inquiry"),
+    path('career_datatable/', views.CareerDatatableView.as_view(), name="career_datatable"),
 
     # --------------------------------------  USER URLS  -------------------------------------------------------
     path('user_add/', views.UserCreateView.as_view(), name="user_add"),
